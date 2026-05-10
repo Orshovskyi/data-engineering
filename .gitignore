@@ -1,6 +1,9 @@
 ### Maven ###
 target/
 
+### Lab 5 lakehouse ###
+minio_data/
+
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
