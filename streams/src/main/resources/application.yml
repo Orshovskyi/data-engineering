@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: kafka-lab-streams
+  main:
+    web-application-type: none
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093
+    streams:
+      application-id: lab4-trip-analytics
+      cleanup:
+        on-shutdown: true
+      properties:
+        processing.guarantee: at_least_once
+        auto.offset.reset: earliest
+        replication.factor: 2
+        min.insync.replicas: 1
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+lab4:
+  kafka:
+    input-topic: Topic1
+    output:
+      avg-duration-by-day: lab4-avg-duration-by-day
+      trip-count-by-day: lab4-trip-count-by-day
+      top-start-station-by-day: lab4-top-start-station-by-day
+      top3-stations-by-day: lab4-top3-stations-by-day
+
+logging:
+  level:
+    org.apache.kafka: WARN
+    com.dataengineering.lab4: INFO

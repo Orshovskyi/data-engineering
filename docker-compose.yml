@@ -58,7 +58,11 @@ services:
       cub kafka-ready -b kafka2:29092 1 120 &&
       kafka-topics --create --if-not-exists --topic Topic1 --bootstrap-server kafka1:29092 --partitions 2 --replication-factor 2 &&
       kafka-topics --create --if-not-exists --topic Topic2 --bootstrap-server kafka1:29092 --partitions 2 --replication-factor 2 &&
-      echo 'Topics Topic1 and Topic2 are ready.'
+      kafka-topics --create --if-not-exists --topic lab4-avg-duration-by-day --bootstrap-server kafka1:29092 --partitions 2 --replication-factor 2 &&
+      kafka-topics --create --if-not-exists --topic lab4-trip-count-by-day --bootstrap-server kafka1:29092 --partitions 2 --replication-factor 2 &&
+      kafka-topics --create --if-not-exists --topic lab4-top-start-station-by-day --bootstrap-server kafka1:29092 --partitions 2 --replication-factor 2 &&
+      kafka-topics --create --if-not-exists --topic lab4-top3-stations-by-day --bootstrap-server kafka1:29092 --partitions 2 --replication-factor 2 &&
+      echo 'All topics are ready.'
       "
 
   kafka-ui:
@@ -76,7 +80,7 @@ services:
   producer:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: producer/Dockerfile
     depends_on:
       kafka-init:
         condition: service_completed_successfully
@@ -88,3 +92,14 @@ services:
       MAX_RECORDS: "500"
     volumes:
       - ./Divvy_Trips_2019_Q4.csv:/data/trips.csv:ro
+
+  streams:
+    build:
+      context: .
+      dockerfile: streams/Dockerfile
+    depends_on:
+      producer:
+        condition: service_completed_successfully
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092,kafka2:29092
+    restart: unless-stopped
